@@ -200,9 +200,25 @@ const Transactions = function() {
       ]));
       break;
 
+    // BUTK-Based Transactions
+    case 'butkoin':
+      if (rpcData.founder_payments_started && rpcData.founder) {
+        founderReward = rpcData.founder.amount;
+        founderScript = utils.addressToScript(rpcData.founder.payee, network);
+        reward -= founderReward;
+        rewardToPool -= founderReward;
+        txOutputBuffers.push(Buffer.concat([
+          utils.packUInt64LE(founderReward),
+          utils.varIntBuffer(founderScript.length),
+          founderScript,
+        ]));
+      }
+      break;
+
     default:
       break;
     }
+
 
     // Handle Recipient Transactions
     let recipientTotal = 0;
